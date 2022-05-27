@@ -8,6 +8,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [gifUrl, setGifUrl] = useState("");
+  const [gifList, setGifList] = useState([]);
   const TEST_GIFS = [
     "https://i.giphy.com/media/aUPfvs5MOXpxm/giphy.webp",
     "https://i.giphy.com/media/BWD3CtcudWL28/giphy.webp",
@@ -56,9 +57,11 @@ const App = () => {
     }
   };
 
-  const sendGif = async () => {
+  const sendGif = () => {
     if (gifUrl.length > 0) {
       console.log("Gif Url", gifUrl);
+      setGifList([...gifList, gifUrl]);
+      setGifUrl("");
     } else {
       console.log("Please paste url first");
     }
@@ -90,8 +93,10 @@ const App = () => {
         />
         <button
           type="submit"
-          onSubmit={(e) => {
+          onClick={(e) => {
+            console.log("ok");
             e.preventDefault();
+
             sendGif();
           }}
           className="bg-gradient-to-br from-blue-600 to-indigo-500 px-2 py-1 rounded font-bold"
@@ -100,7 +105,7 @@ const App = () => {
         </button>
       </form>
       <div className="grid grid-cols-4 lg:px-40 md:scroll-px-10 px-2">
-        {TEST_GIFS.map((gif, index) => (
+        {gifList.map((gif, index) => (
           <div key={gif + index} className="p-1">
             <img
               src={gif}
@@ -119,7 +124,12 @@ const App = () => {
     window.addEventListener("load", onLoad);
     return () => window.removeEventListener("load", onLoad);
   }, []);
-
+  useEffect(() => {
+    if (walletAddress) {
+      console.log("fetching gifs");
+      setGifList(TEST_GIFS);
+    }
+  }, [walletAddress]);
   return (
     <div>
       <div className="flex items-center flex-col min-h-screen bg-blue-900 text-white">
